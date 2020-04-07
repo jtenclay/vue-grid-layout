@@ -75,7 +75,7 @@
         cursor: sw-resize;
         right: auto;
     }
-    
+
     .vue-grid-item.disable-userselect {
         user-select: none;
     }
@@ -185,6 +185,11 @@
                 required: false,
                 default: 'a, button'
             },
+            scale: {
+                type: Number,
+                required: false,
+                default: 1,
+            }
         },
         inject: ["eventBus"],
         data: function () {
@@ -476,11 +481,11 @@
 //                        console.log("### resize => " + event.type + ", lastW=" + this.lastW + ", lastH=" + this.lastH);
                         const coreEvent = createCoreData(this.lastW, this.lastH, x, y);
                         if (this.renderRtl) {
-                            newSize.width = this.resizing.width - coreEvent.deltaX;
+                            newSize.width = this.resizing.width - coreEvent.deltaX / this.scale;
                         } else {
-                            newSize.width = this.resizing.width + coreEvent.deltaX;
+                            newSize.width = this.resizing.width + coreEvent.deltaX / this.scale;
                         }
-                        newSize.height = this.resizing.height + coreEvent.deltaY;
+                        newSize.height = this.resizing.height + coreEvent.deltaY / this.scale;
 
                         ///console.log("### resize => " + event.type + ", deltaX=" + coreEvent.deltaX + ", deltaY=" + coreEvent.deltaY);
                         this.resizing = newSize;
@@ -548,11 +553,11 @@
                         var parentRect = event.target.offsetParent.getBoundingClientRect();
                         var clientRect = event.target.getBoundingClientRect();
                         if (this.renderRtl) {
-                            newPosition.left = (clientRect.right - parentRect.right) * -1;
+                            newPosition.left = (clientRect.right - parentRect.right) * -1 / this.scale;
                         } else {
-                            newPosition.left = clientRect.left - parentRect.left;
+                            newPosition.left = (clientRect.left - parentRect.left) / this.scale;
                         }
-                        newPosition.top = clientRect.top - parentRect.top;
+                        newPosition.top = (clientRect.top - parentRect.top) / this.scale;
                         this.dragging = newPosition;
                         this.isDragging = true;
                         break;
@@ -562,11 +567,11 @@
                         clientRect = event.target.getBoundingClientRect();
 //                        Add rtl support
                         if (this.renderRtl) {
-                            newPosition.left = (clientRect.right - parentRect.right) * -1;
+                            newPosition.left = (clientRect.right - parentRect.right) * -1 / this.scale;
                         } else {
-                            newPosition.left = clientRect.left - parentRect.left;
+                            newPosition.left = (clientRect.left - parentRect.left) / this.scale;
                         }
-                        newPosition.top = clientRect.top - parentRect.top;
+                        newPosition.top = (clientRect.top - parentRect.top) / this.scale;
 //                        console.log("### drag end => " + JSON.stringify(newPosition));
 //                        console.log("### DROP: " + JSON.stringify(newPosition));
                         this.dragging = null;
@@ -577,11 +582,11 @@
                         const coreEvent = createCoreData(this.lastX, this.lastY, x, y);
 //                        Add rtl support
                         if (this.renderRtl) {
-                            newPosition.left = this.dragging.left - coreEvent.deltaX;
+                            newPosition.left = this.dragging.left - coreEvent.deltaX / this.scale;
                         } else {
-                            newPosition.left = this.dragging.left + coreEvent.deltaX;
+                            newPosition.left = this.dragging.left + coreEvent.deltaX / this.scale;
                         }
-                        newPosition.top = this.dragging.top + coreEvent.deltaY;
+                        newPosition.top = this.dragging.top + coreEvent.deltaY / this.scale;
 //                        console.log("### drag => " + event.type + ", x=" + x + ", y=" + y);
 //                        console.log("### drag => " + event.type + ", deltaX=" + coreEvent.deltaX + ", deltaY=" + coreEvent.deltaY);
 //                        console.log("### drag end => " + JSON.stringify(newPosition));
